@@ -25,7 +25,7 @@
 {
     [super viewDidLoad];
   
-  _stringsArray = @[@"Easy to use", @"Time-saver", @"Customizable", @"Only a few lines of code", @"Works with custom fonts"];
+  _stringsArray = @[@[@"Easy to use", @"Time-saver", @"Customizable"],@[ @"Only a few lines of code", @"Works with custom fonts"]];
   _objectsArray = [NSArray arrayWithObjects: @"hello", @14, @13.3, @"Icecream", @1,  nil];
   
   _selectedObject = [_objectsArray objectAtIndex:0];
@@ -94,19 +94,18 @@
   
   //PickerView with selectedValue functionality, and customized look, with array of strings
    [MMPickerView showPickerViewInView:self.view
-                          withStrings:_stringsArray
+                          withArrayOfArrayOfStrings:_stringsArray
                           withOptions:@{MMbackgroundColor: [UIColor whiteColor],
                                         MMtextColor: [UIColor blackColor],
                                         MMtoolbarColor: [UIColor whiteColor],
                                         MMbuttonColor: [UIColor blueColor],
                                         MMfont: [UIFont systemFontOfSize:18],
                                         MMvalueY: @3,
-                                        MMselectedObject:_selectedString,
-                                        MMtextAlignment:@1}
-                           completion:^(NSString *selectedString) {
+                                        MMselectedObject:@"Easy to use"}
+                           completion:^(NSArray *arrayOfStrings) {
    
-                             _label.text = selectedString;
-                             _selectedString = selectedString;
+                             _label.text = arrayOfStrings[0];
+                             _selectedString = arrayOfStrings[0];
    }];
   
   

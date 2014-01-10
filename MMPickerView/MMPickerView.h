@@ -16,18 +16,16 @@ extern NSString * const MMfont;
 extern NSString * const MMvalueY;
 extern NSString * const MMselectedObject;
 extern NSString * const MMtoolbarBackgroundImage;
-extern NSString * const MMtextAlignment;
-extern NSString * const MMshowsSelectionIndicator;
 
-@interface MMPickerView: UIView 
+@interface MMPickerView: UIView
 
 +(void)showPickerViewInView:(UIView *)view
-  withArrayOfArraysOfStrings:(NSArray *)strings
+  withArrayOfArrayOfStrings:(NSArray *)strings
                 withOptions:(NSDictionary *)options
                  completion:(void (^)(NSArray *))completion;
 
 +(void)showPickerViewInView:(UIView *)view
-  withArrayOfArraysOfObjects:(NSArray *)objects
+  withArrayOfArrayOfObjects:(NSArray *)objects
                 withOptions:(NSDictionary *)options
     objectToStringConverter:(NSString *(^)(id))converter
                  completion:(void (^)(NSArray* objects))completion;
