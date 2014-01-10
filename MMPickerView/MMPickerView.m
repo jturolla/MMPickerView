@@ -31,13 +31,13 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 @property (nonatomic, strong) UIBarButtonItem *pickerViewBarButtonItem;
 @property (nonatomic, strong) UIButton *pickerDoneButton;
 @property (nonatomic, strong) UIPickerView *pickerView;
-@property (nonatomic, strong) NSArray *pickerViewArray;
+@property (nonatomic, strong) NSArray *pickerViewArrayOfArrays;
 @property (nonatomic, strong) UIColor *pickerViewTextColor;
 @property (nonatomic, strong) UIFont *pickerViewFont;
 @property (nonatomic, assign) CGFloat yValueFromTop;
 @property (nonatomic, assign) NSInteger pickerViewTextAlignment;
 @property (nonatomic, assign) BOOL pickerViewShowsSelectionIndicator;
-@property (copy) void (^onDismissCompletion)(NSString *);
+@property (copy) void (^onDismissCompletion)(NSArray *);
 @property (copy) NSString *(^objectToStringConverter)(id object);
 
 @end
@@ -57,12 +57,12 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 #pragma mark - Show Methods
 
 +(void)showPickerViewInView:(UIView *)view
-                withStrings:(NSArray *)strings
+  withArrayOfArraysOfStrings:(NSArray *)strings
                 withOptions:(NSDictionary *)options
-                 completion:(void (^)(NSString *))completion{
+                 completion:(void (^)(NSArray *))completion{
   
   [[self sharedView] initializePickerViewInView:view
-                                      withArray:strings
+                            withArrayOfArrays:strings
                                     withOptions:options];
   
   [[self sharedView] setPickerHidden:NO callBack:nil];
@@ -72,15 +72,15 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 }
 
 +(void)showPickerViewInView:(UIView *)view
-                withObjects:(NSArray *)objects
+ withArrayOfArraysOfObjects:(NSArray *)objects
                 withOptions:(NSDictionary *)options
     objectToStringConverter:(NSString *(^)(id))converter
-                 completion:(void (^)(id))completion {
+                 completion:(void (^)(NSArray* objects))completion {
   
   [self sharedView].objectToStringConverter = converter;
   [self sharedView].onDismissCompletion = completion;
   [[self sharedView] initializePickerViewInView:view
-                                      withArray:objects
+                                      withArrayOfArrays:objects
                                     withOptions:options];
   [[self sharedView] setPickerHidden:NO callBack:nil];
   [view addSubview:[self sharedView]];
@@ -89,7 +89,7 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 
 #pragma mark - Dismiss Methods
 
-+(void)dismissWithCompletion:(void (^)(NSString *))completion{
++(void)dismissWithCompletion:(void (^)(NSArray *))completion{
   [[self sharedView] setPickerHidden:YES callBack:completion];
 }
 
@@ -104,7 +104,7 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 #pragma mark - Show/hide PickerView methods
 
 -(void)setPickerHidden: (BOOL)hidden
-              callBack: (void(^)(NSString *))callBack; {
+              callBack: (void(^)(NSArray *))callBack; {
   
   [UIView animateWithDuration:0.3
                         delay:0.0
@@ -121,7 +121,7 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
                    } completion:^(BOOL completed) {
                      if(completed && hidden){
                        [MMPickerView removePickerView];
-                       callBack([self selectedObject]);
+                       callBack([self arrayOfSelectedObjects]);
                      }
                    }];
   
@@ -130,20 +130,19 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 #pragma mark - Initialize PickerView
 
 -(void)initializePickerViewInView: (UIView *)view
-                        withArray: (NSArray *)array
+                withArrayOfArrays: (NSArray *)array
                       withOptions: (NSDictionary *)options {
   
-  _pickerViewArray = array;
+  _pickerViewArrayOfArrays = array;
   
   id chosenObject = options[MMselectedObject];
   NSInteger selectedRow;
   
   if (chosenObject!=nil) {
-    selectedRow = [_pickerViewArray indexOfObject:chosenObject];
+    selectedRow = [_pickerViewArrayOfArrays indexOfObject:chosenObject];
   }else{
-    selectedRow = [[_pickerViewArray objectAtIndex:0] integerValue];
+      selectedRow = 0;
   }
-  
   
   NSNumber *textAlignment = [[NSNumber alloc] init];
   textAlignment = options[MMtextAlignment];
@@ -289,35 +288,42 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 #pragma mark - UIPickerViewDataSource
 
 - (NSInteger)numberOfComponentsInPickerView: (UIPickerView *)pickerView {
-  return 1;
+   return [_pickerViewArrayOfArrays count];
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent: (NSInteger)component {
-  return [_pickerViewArray count];
+  return [_pickerViewArrayOfArrays[component] count];
 }
 
 - (NSString *)pickerView: (UIPickerView *)pickerView
              titleForRow: (NSInteger)row
             forComponent: (NSInteger)component {
   if (self.objectToStringConverter == nil){
-    return [_pickerViewArray objectAtIndex:row];
+    return [_pickerViewArrayOfArrays[component] objectAtIndex:row];
   } else{
-    return (self.objectToStringConverter ([_pickerViewArray objectAtIndex:row]));
+    return (self.objectToStringConverter ([_pickerViewArrayOfArrays[component] objectAtIndex:row]));
   }
 }
 
 #pragma mark - UIPickerViewDelegate
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-  if (self.objectToStringConverter == nil) {
-    self.onDismissCompletion ([_pickerViewArray objectAtIndex:row]);
-  } else{
-    self.onDismissCompletion (self.objectToStringConverter ([self selectedObject]));
-  }
+  self.onDismissCompletion ([self arrayOfSelectedObjects]);
 }
 
-- (id)selectedObject {
-  return [_pickerViewArray objectAtIndex: [self.pickerView selectedRowInComponent:0]];
+- (NSArray*)arrayOfSelectedObjects {
+    
+    NSMutableArray *arrayOfArraysOfObjects = [[NSMutableArray alloc] init];
+    
+    int i = 0;
+    for (id object in _pickerViewArrayOfArrays) {
+        
+        [arrayOfArraysOfObjects addObject:
+         _pickerViewArrayOfArrays[i][[self.pickerView selectedRowInComponent:i]]];
+        i++;
+    }
+
+    return arrayOfArraysOfObjects;
 }
 
 - (UIView *)pickerView:(UIPickerView *)pickerView
@@ -361,9 +367,9 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
   }
   
   if (self.objectToStringConverter == nil){
-    [pickerViewLabel setText: [_pickerViewArray objectAtIndex:row]];
+    [pickerViewLabel setText: [_pickerViewArrayOfArrays[component] objectAtIndex:row]];
   } else{
-    [pickerViewLabel setText:(self.objectToStringConverter ([_pickerViewArray objectAtIndex:row]))];
+    [pickerViewLabel setText:(self.objectToStringConverter ([_pickerViewArrayOfArrays[component] objectAtIndex:row]))];
   }
   
   return customPickerView;

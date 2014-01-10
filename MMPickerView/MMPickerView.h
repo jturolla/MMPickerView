@@ -21,17 +21,17 @@ extern NSString * const MMshowsSelectionIndicator;
 
 @interface MMPickerView: UIView 
 
-+(void)showPickerViewInView: (UIView *)view
-                withStrings: (NSArray *)strings
-                withOptions: (NSDictionary *)options
-                 completion: (void(^)(NSString *selectedString))completion;
++(void)showPickerViewInView:(UIView *)view
+  withArrayOfArraysOfStrings:(NSArray *)strings
+                withOptions:(NSDictionary *)options
+                 completion:(void (^)(NSArray *))completion;
 
-+(void)showPickerViewInView: (UIView *)view
-                withObjects: (NSArray *)objects
-                withOptions: (NSDictionary *)options
-    objectToStringConverter: (NSString *(^)(id object))converter
-       completion: (void(^)(id selectedObject))completion;
++(void)showPickerViewInView:(UIView *)view
+  withArrayOfArraysOfObjects:(NSArray *)objects
+                withOptions:(NSDictionary *)options
+    objectToStringConverter:(NSString *(^)(id))converter
+                 completion:(void (^)(NSArray* objects))completion;
 
-+(void)dismissWithCompletion: (void(^)(NSString *))completion;
++(void)dismissWithCompletion:(void (^)(NSArray *))completion;
 
 @end
