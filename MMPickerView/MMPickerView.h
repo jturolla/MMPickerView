@@ -20,14 +20,14 @@ extern NSString * const MMtoolbarBackgroundImage;
 @interface MMPickerView: UIView
 
 +(void)showPickerViewInView:(UIView *)view
-  withArrayOfArrayOfStrings:(NSArray *)strings
+  withArrayOfArraysOfStrings:(NSArray *)strings
                 withOptions:(NSDictionary *)options
                  completion:(void (^)(NSArray *))completion;
 
 +(void)showPickerViewInView:(UIView *)view
-  withArrayOfArrayOfObjects:(NSArray *)objects
+  withArrayOfArraysOfObjects:(NSArray *)objects
                 withOptions:(NSDictionary *)options
-    objectToStringConverter:(NSString *(^)(id))converter
+    objectToStringConverter:(NSString *(^)(id object))converter
                  completion:(void (^)(NSArray* objects))completion;
 
 +(void)dismissWithCompletion:(void (^)(NSArray *))completion;

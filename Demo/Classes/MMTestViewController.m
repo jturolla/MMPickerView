@@ -94,7 +94,7 @@
   
   //PickerView with selectedValue functionality, and customized look, with array of strings
    [MMPickerView showPickerViewInView:self.view
-                          withArrayOfArrayOfStrings:_stringsArray
+                          withArrayOfArraysOfStrings:_stringsArray
                           withOptions:@{MMbackgroundColor: [UIColor whiteColor],
                                         MMtextColor: [UIColor blackColor],
                                         MMtoolbarColor: [UIColor whiteColor],

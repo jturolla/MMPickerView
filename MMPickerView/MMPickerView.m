@@ -57,7 +57,7 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 #pragma mark - Show Methods
 
 +(void)showPickerViewInView:(UIView *)view
-  withArrayOfArrayOfStrings:(NSArray *)strings
+  withArrayOfArraysOfStrings:(NSArray *)strings
                 withOptions:(NSDictionary *)options
                  completion:(void (^)(NSArray *))completion{
     
@@ -72,9 +72,9 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
 }
 
 +(void)showPickerViewInView:(UIView *)view
- withArrayOfArraysOfObjects:(NSArray *)objects
+  withArrayOfArraysOfObjects:(NSArray *)objects
                 withOptions:(NSDictionary *)options
-    objectToStringConverter:(NSString *(^)(id))converter
+    objectToStringConverter:(NSString *(^)(id object))converter
                  completion:(void (^)(NSArray* objects))completion {
     
     [self sharedView].objectToStringConverter = converter;
