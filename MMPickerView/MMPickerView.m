@@ -101,6 +101,12 @@ NSString * const MMshowsSelectionIndicator = @"showsSelectionIndicator";
     [[self sharedView] removeFromSuperview];
 }
 
+- (void) reset {
+    self.objectToStringConverter = nil;
+    self.onDismissCompletion = nil;
+    self.pickerViewArrayOfArrays = [NSArray new];
+}
+
 #pragma mark - Show/hide PickerView methods
 
 -(void)setPickerHidden: (BOOL)hidden

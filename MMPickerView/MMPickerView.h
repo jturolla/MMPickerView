@@ -19,6 +19,9 @@ extern NSString * const MMtoolbarBackgroundImage;
 
 @interface MMPickerView: UIView
 
++ (MMPickerView*)sharedView;
+- (void) reset;
+
 +(void)showPickerViewInView:(UIView *)view
   withArrayOfArraysOfStrings:(NSArray *)strings
                 withOptions:(NSDictionary *)options
